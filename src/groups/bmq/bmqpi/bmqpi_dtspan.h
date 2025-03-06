@@ -56,6 +56,10 @@ class DTSpan {
     /// Returns the name of the operation that this `DTSpan` represents.
     virtual bsl::string_view operation() const = 0;
 
+    /// Finish this span. Return 0 on success, or a non-zero error code
+    /// on error
+    virtual int finish() const = 0;
+
     // =============
     // class Baggage
     // =============
