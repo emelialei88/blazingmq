@@ -332,8 +332,9 @@ int Application::start(bsl::ostream& errorDescription)
 
     // Start the transport manager
     bslma::ManagedPtr<mqbnet::Authenticator> authenticatorMp(
-        new (*d_allocator_p)
-            Authenticator(&d_blobSpPool, d_allocators.get("Authenticator")),
+        new (*d_allocator_p) Authenticator(&d_blobSpPool,
+                                           d_authenticationController_mp.get(),
+                                           d_allocators.get("Authenticator")),
         d_allocator_p);
 
     SessionNegotiator* sessionNegotiator = new (*d_allocator_p)
@@ -342,6 +343,7 @@ int Application::start(bsl::ostream& errorDescription)
                           d_statController_mp->clientsStatContext(),
                           &d_blobSpPool,
                           d_scheduler_p,
+                          d_authenticationController_mp.get(),
                           d_allocators.get("SessionNegotiator"));
 
     (*sessionNegotiator)

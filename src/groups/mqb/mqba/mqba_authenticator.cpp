@@ -146,10 +146,13 @@ void Authenticator::initiateOutboundAuthentication(
 }
 
 // CREATORS
-Authenticator::Authenticator(BlobSpPool*       blobSpPool,
-                             bslma::Allocator* allocator)
+Authenticator::Authenticator(
+    BlobSpPool*                         blobSpPool,
+    mqbauthn::AuthenticationController* authnController,
+    bslma::Allocator*                   allocator)
 : d_allocator_p(allocator)
 , d_blobSpPool_p(blobSpPool)
+, d_authnController_p(authnController)
 , d_clusterCatalog_p(0)
 {
     // NOTHING

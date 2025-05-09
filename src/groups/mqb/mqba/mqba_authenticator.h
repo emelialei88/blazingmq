@@ -29,6 +29,7 @@
 /// concurrently from many IO threads.
 
 // MQB
+#include <mqbauthn_authenticationcontroller.h>
 #include <mqbconfm_messages.h>
 #include <mqbnet_authenticator.h>
 
@@ -86,6 +87,9 @@ class Authenticator : public mqbnet::Authenticator {
 
     BlobSpPool* d_blobSpPool_p;
 
+    /// Authentication Controller.
+    mqbauthn::AuthenticationController* d_authnController_p;
+
     /// Cluster catalog to query for cluster information.
     mqbblp::ClusterCatalog* d_clusterCatalog_p;
 
@@ -140,7 +144,9 @@ class Authenticator : public mqbnet::Authenticator {
     /// `bufferFactory`, `dispatcher`, `statContext`, `scheduler` and
     /// `blobSpPool` to inject in the negotiated sessions.  Use the
     /// specified `allocator` for all memory allocations.
-    Authenticator(BlobSpPool* blobSpPool, bslma::Allocator* allocator);
+    Authenticator(BlobSpPool*                         blobSpPool,
+                  mqbauthn::AuthenticationController* authnController,
+                  bslma::Allocator*                   allocator);
 
     /// Destructor
     ~Authenticator() BSLS_KEYWORD_OVERRIDE;

@@ -32,6 +32,7 @@
 /// TODO
 
 // MQB
+#include <mqbauthn_authenticationcontroller.h>
 #include <mqbconfm_messages.h>
 #include <mqbnet_negotiationcontext.h>
 #include <mqbnet_negotiator.h>
@@ -122,6 +123,9 @@ class SessionNegotiator : public mqbnet::Negotiator {
     /// Pointer to the event scheduler to use (held, not owned).
     bdlmt::EventScheduler* d_scheduler_p;
 
+    /// Authentication Controller.
+    mqbauthn::AuthenticationController* d_authnController_p;
+
     /// The callback to invoke on received admin command.
     mqbnet::Session::AdminCommandEnqueueCb d_adminCb;
 
@@ -196,12 +200,13 @@ class SessionNegotiator : public mqbnet::Negotiator {
     /// `bufferFactory`, `dispatcher`, `statContext`, `scheduler` and
     /// `blobSpPool` to inject in the negotiated sessions.  Use the
     /// specified `allocator` for all memory allocations.
-    SessionNegotiator(bdlbb::BlobBufferFactory* bufferFactory,
-                      mqbi::Dispatcher*         dispatcher,
-                      bmqst::StatContext*       statContext,
-                      BlobSpPool*               blobSpPool,
-                      bdlmt::EventScheduler*    scheduler,
-                      bslma::Allocator*         allocator);
+    SessionNegotiator(bdlbb::BlobBufferFactory*           bufferFactory,
+                      mqbi::Dispatcher*                   dispatcher,
+                      bmqst::StatContext*                 statContext,
+                      BlobSpPool*                         blobSpPool,
+                      bdlmt::EventScheduler*              scheduler,
+                      mqbauthn::AuthenticationController* authnController,
+                      bslma::Allocator*                   allocator);
 
     /// Destructor
     ~SessionNegotiator() BSLS_KEYWORD_OVERRIDE;

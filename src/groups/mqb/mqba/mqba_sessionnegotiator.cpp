@@ -811,12 +811,14 @@ bool SessionNegotiator::checkIsUnsupportedSdkVersion(
 }
 
 // CREATORS
-SessionNegotiator::SessionNegotiator(bdlbb::BlobBufferFactory* bufferFactory,
-                                     mqbi::Dispatcher*         dispatcher,
-                                     bmqst::StatContext*       statContext,
-                                     BlobSpPool*               blobSpPool,
-                                     bdlmt::EventScheduler*    scheduler,
-                                     bslma::Allocator*         allocator)
+SessionNegotiator::SessionNegotiator(
+    bdlbb::BlobBufferFactory*           bufferFactory,
+    mqbi::Dispatcher*                   dispatcher,
+    bmqst::StatContext*                 statContext,
+    BlobSpPool*                         blobSpPool,
+    bdlmt::EventScheduler*              scheduler,
+    mqbauthn::AuthenticationController* authnController,
+    bslma::Allocator*                   allocator)
 : d_allocator_p(allocator)
 , d_bufferFactory_p(bufferFactory)
 , d_dispatcher_p(dispatcher)
@@ -825,6 +827,7 @@ SessionNegotiator::SessionNegotiator(bdlbb::BlobBufferFactory* bufferFactory,
 , d_blobSpPool_p(blobSpPool)
 , d_clusterCatalog_p(0)
 , d_scheduler_p(scheduler)
+, d_authnController_p(authnController)
 {
     // NOTHING
 }
