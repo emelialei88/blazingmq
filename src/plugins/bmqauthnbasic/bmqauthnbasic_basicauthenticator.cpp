@@ -85,6 +85,9 @@ int BasicAuthenticator::authenticate(
     *result = bsl::allocate_shared<BasicAuthenticationResult>(d_allocator_p,
                                                               principal,
                                                               600 * 1000);
+    BALL_LOG_INFO << "BasicAuthenticator::authenticate()"
+                  << " principal: " << (*result)->principal()
+                  << " lifetimeMs: " << (*result)->lifetimeMs().value_or(0);
 
     return 0;
 }

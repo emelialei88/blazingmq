@@ -14,6 +14,7 @@
 // limitations under the License.
 
 // mqbauthn_authenticationcontroller.cpp                          -*-C++-*-
+#include <ball_log.h>
 #include <bslstl_vector.h>
 #include <mqbauthn_authenticationcontroller.h>
 
@@ -81,8 +82,14 @@ int AuthenticationController::start(bsl::ostream& errorDescription)
                  pluginFactories.cbegin();
              factoryIt != pluginFactories.cend();
              ++factoryIt) {
+            BALL_LOG_INFO << "In [AuthenticationController::start()]"
+                          << " before dynamic_cast()";
             mqbplug::AuthenticatorPluginFactory* factory =
                 dynamic_cast<mqbplug::AuthenticatorPluginFactory*>(*factoryIt);
+
+            BALL_LOG_INFO << "In [AuthenticationController::start()]"
+                          << " after dynamic_cast()";
+
             AuthenticatorMp authenticator = factory->create(d_allocator_p);
 
             if (int status = authenticator->start(errorStream)) {
@@ -96,6 +103,7 @@ int AuthenticationController::start(bsl::ostream& errorDescription)
             }
 
             // Add the authenticator into the collection
+            // TODO: this might have been handled somewhere else
             AuthenticatorMap::const_iterator cit = d_authenticators.find(
                 authenticator->mechanism());
             if (cit != d_authenticators.cend()) {
@@ -134,8 +142,21 @@ int AuthenticationController::authenticate(
     int                rc = rc_SUCCESS;
     bmqu::MemOutStream errorStream(d_allocator_p);
 
+    BALL_LOG_INFO << "In [AuthenticationController::authenticate()]"
+                  << " mechanism: " << mechanism;
+
+    BALL_LOG_INFO << "Supported authentication mechanisms:";
+    for (AuthenticatorMap::const_iterator it = d_authenticators.cbegin();
+         it != d_authenticators.cend();
+         ++it) {
+        BALL_LOG_INFO << "  " << it->first;
+    }
+
     AuthenticatorMap::const_iterator cit = d_authenticators.find(mechanism);
     if (cit != d_authenticators.cend()) {
+        BALL_LOG_INFO << "In [AuthenticationController::authenticate()]: "
+                         "Found authenticator for mechanism: "
+                      << mechanism;
         const AuthenticatorMp& authenticator = cit->second;
         rc = authenticator->authenticate(errorStream, result, input);
         if (rc != rc_SUCCESS) {
@@ -147,6 +168,9 @@ int AuthenticationController::authenticate(
         }
     }
     else {
+        BALL_LOG_INFO << "In [AuthenticationController::authenticate()]: No "
+                         "authenticator found for mechanism: "
+                      << mechanism;
         errorDescription
             << "AuthenticationController: authentication mechanism '"
             << mechanism << "' not supported.";

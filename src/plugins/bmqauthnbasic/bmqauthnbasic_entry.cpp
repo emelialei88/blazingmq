@@ -41,6 +41,9 @@ void instantiatePluginLibrary(
 
     // TODO: print version
 
+    BALL_LOG_INFO << "At the entry point of the Basic Authenticator plugin "
+                     "PluginLibrary";
+
     *library =
         bslma::ManagedPtrUtil::allocateManaged<bmqauthnbasic::PluginLibrary>(
             allocator);

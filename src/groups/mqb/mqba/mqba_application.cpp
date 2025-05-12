@@ -299,6 +299,10 @@ int Application::start(bsl::ostream& errorDescription)
         return (rc * 100) + rc_STATCONTROLLER;  // RETURN
     }
 
+    BALL_LOG_INFO << "Before start AuthenticationController";
+    BALL_LOG_INFO << "Make sure mqbcfg::BrokerConfig::get() works: "
+                  << mqbcfg::BrokerConfig::get();
+
     // Start the AuthenticationController
     d_authenticationController_mp.load(
         new (*d_allocator_p) mqbauthn::AuthenticationController(

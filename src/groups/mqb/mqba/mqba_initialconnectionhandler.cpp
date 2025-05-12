@@ -189,6 +189,9 @@ int InitialConnectionHandler::processBlob(
 
     // Authentication or Negotiation based on the type of message received.
     if (authenticationMsg.has_value()) {
+        BALL_LOG_INFO << "[processBlob]: Gets AuthenticationMessage "
+                      << authenticationMsg.value();
+
         context->authenticationContext()->d_authenticationMessage =
             authenticationMsg.value();
 
@@ -198,6 +201,9 @@ int InitialConnectionHandler::processBlob(
             context->authenticationContext());
     }
     else if (negotiationMsg.has_value()) {
+        BALL_LOG_INFO << "[processBlob]: Gets NegotiationMessage "
+                      << negotiationMsg.value();
+
         context->negotiationContext()->d_negotiationMessage =
             negotiationMsg.value();
 

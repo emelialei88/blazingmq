@@ -60,7 +60,7 @@ int Authenticator::onAuthenticationRequest(
     bmqp_ctrlmsg::AuthenticateRequest& authenticateRequest =
         context->d_authenticationMessage.authenticateRequest();
 
-    BALL_LOG_DEBUG
+    BALL_LOG_INFO
         << "Received authentication message from '"
         << context->d_initialConnectionContext_p->channel()->peerUri()
         << "': " << authenticateRequest;

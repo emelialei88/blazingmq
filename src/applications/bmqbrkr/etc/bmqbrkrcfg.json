@@ -92,6 +92,19 @@
         },
         "bmqconfConfig": {
             "cacheTTLSeconds": 30
+        },
+        "plugins": {
+            "libraries": ["/Users/wlei29/Workspace/blazingmq/cmake.bld/src/plugins/"],
+            "enabled": ["BasicAuthenticator"]
+        },
+        "authentication": {
+            "plugins": [
+                {
+                    "name": "BasicAuthenticator",
+                    "configs": []
+                }
+            ],
+            "fallbackPrincipal": "defaultFallbackPrincipal"
         }
     }
 }

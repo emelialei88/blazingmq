@@ -95,6 +95,8 @@ void PluginManager::enableRequiredPlugins(
 {
     enum RcEnum { rc_SUCCESS = 0, rc_ACTIVATION_FAILED = -1 };
 
+    BALL_LOG_INFO << "In [PluginManager::enableRequiredPlugins()]";
+
     // If an error was encountered during a prior 'loadPluginLibrary()' call,
     // then 'rc' will be nonzero, and no further plugins should be loaded.
     if ((*rc) != rc_SUCCESS) {
@@ -334,6 +336,9 @@ int PluginManager::start(const mqbcfg::Plugins& pluginsConfig,
     bsl::vector<bsl::string>::const_iterator libraryIt = libraries->cbegin();
     for (; libraryIt != libraries->cend(); ++libraryIt) {
         bsl::string pattern(*libraryIt);
+        BALL_LOG_INFO << "[PluginManager::start()] "
+                         "Loading plugin library from path: "
+                      << pattern;
         if (int status = bdls::PathUtil::appendIfValid(&pattern, "*.so")) {
             errorDescription
                 << "Plugin library directory was invalid [path: " << pattern
@@ -359,6 +364,16 @@ int PluginManager::start(const mqbcfg::Plugins& pluginsConfig,
             break;  // BREAK
         }
     }
+
+    BALL_LOG_INFO << "[PluginManager::start()] requiredPlugins: [";
+    RequiredPluginsRecord::const_iterator it = requiredPlugins.cbegin();
+    for (; it != requiredPlugins.cend(); ++it) {
+        BALL_LOG_INFO << "'" << it->first << "' (" << it->second << ")";
+        if (it != requiredPlugins.cend()) {
+            BALL_LOG_INFO << ", ";
+        }
+    }
+    BALL_LOG_INFO << "]";
 
     // If any required plugins could not be located in the plugin-libraries
     // from the paths provided, exit with error during broker startup.

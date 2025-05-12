@@ -251,7 +251,7 @@ int SessionUtil::createApplication(SessionImpl* sessionImpl)
     bmqp_ctrlmsg::AuthenticateRequest&  ar =
         authenticationMessage.makeAuthenticateRequest();
     bsl::string str = "username:password";
-    ar.mechanism()  = "basic";
+    ar.mechanism()  = "Basic";
     ar.data()       = bsl::vector<char>(str.begin(), str.end());  // hexBinary
 
     // Negotiation Message

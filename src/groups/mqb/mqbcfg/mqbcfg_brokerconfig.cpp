@@ -17,6 +17,7 @@
 #include <mqbcfg_brokerconfig.h>
 
 // BDE
+#include <bsl_iostream.h>
 #include <bsls_assert.h>
 
 namespace BloombergLP {
@@ -35,6 +36,7 @@ const AppConfig* s_config_p;
 // MANIPULATORS
 void BrokerConfig::set(const AppConfig& config)
 {
+    bsl::cout << "BrokerConfig::set" << bsl::endl;
     BSLS_ASSERT_SAFE(!s_config_p && "config already set");
     s_config_p = &config;
 }
@@ -42,6 +44,7 @@ void BrokerConfig::set(const AppConfig& config)
 // ACCESSORS
 const AppConfig& BrokerConfig::get()
 {
+    bsl::cout << "BrokerConfig::get" << bsl::endl;
     BSLS_ASSERT_SAFE(s_config_p && "config not set");
     return *s_config_p;
 }
