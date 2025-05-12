@@ -74,6 +74,13 @@ InitialConnectionContext& InitialConnectionContext::setNegotiationContext(
     return *this;
 }
 
+InitialConnectionContext& InitialConnectionContext::setAuthenticationResult(
+    const bsl::shared_ptr<mqbplug::AuthenticationResult>& value)
+{
+    d_authenticationResult = value;
+    return *this;
+}
+
 bool InitialConnectionContext::isIncoming() const
 {
     return d_isIncoming;
@@ -111,6 +118,12 @@ const bsl::shared_ptr<NegotiationContext>&
 InitialConnectionContext::negotiationContext() const
 {
     return d_negotiationCtxSp;
+}
+
+const bsl::shared_ptr<mqbplug::AuthenticationResult>
+InitialConnectionContext::authenticationResult() const
+{
+    return d_authenticationResult;
 }
 
 }  // close package namespace

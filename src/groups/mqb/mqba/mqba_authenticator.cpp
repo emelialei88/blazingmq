@@ -24,11 +24,14 @@
 
 // MQB
 #include <mqbblp_clustercatalog.h>
+#include <mqbplug_authenticator.h>
 
 // BMQ
+#include <bmqp_ctrlmsg_messages.h>
 
 // BDE
 #include <ball_log.h>
+#include <bsl_memory.h>
 
 namespace BloombergLP {
 namespace mqba {
@@ -66,26 +69,34 @@ int Authenticator::onAuthenticationRequest(
     bmqp_ctrlmsg::AuthenticateResponse& response =
         authenticationResponse.makeAuthenticateResponse();
 
-    // TODO: authenticate
-    if (authenticateRequest.mechanism() == "") {
-        BALL_LOG_ERROR << "Error on authentication";
+    bsl::shared_ptr<mqbplug::AuthenticationResult> result;
+    mqbplug::AuthenticationData                    authnData(
+        authenticateRequest.data().value(),
+        context->d_initialConnectionContext_p->channel()->peerUri());
+    bmqu::MemOutStream errStream;
 
-        bmqu::MemOutStream os;
-        os << "Mechanism is unspecified";
-        response.status().category() =
-            bmqp_ctrlmsg::StatusCategory::E_NOT_SUPPORTED;
-        response.status().message() = os.str();
-        response.status().code()    = -1;
+    int rc = d_authnController_p->authenticate(errStream,
+                                               &result,
+                                               authenticateRequest.mechanism(),
+                                               authnData);
+    if (rc != 0) {
+        response.status().code()     = rc;
+        response.status().category() = bmqp_ctrlmsg::StatusCategory::E_REFUSED;
+        response.status().message()  = errStream.str();
     }
     else {
-        response.status().category() = bmqp_ctrlmsg::StatusCategory::E_SUCCESS;
+        BSLS_ASSERT_SAFE(result);
+
         response.status().code()     = 0;
-        response.lifetimeMs()        = 10 * 60 * 1000;
+        response.status().category() = bmqp_ctrlmsg::StatusCategory::E_SUCCESS;
+        response.lifetimeMs()        = result->lifetimeMs();
+
+        context->d_initialConnectionContext_p->setAuthenticationResult(result);
     }
 
-    int rc = sendAuthenticationMessage(errorDescription,
-                                       authenticationResponse,
-                                       context);
+    rc = sendAuthenticationMessage(errorDescription,
+                                   authenticationResponse,
+                                   context);
 
     return rc;
 }

@@ -27,6 +27,9 @@
 // associated to an initial connection being established
 //
 
+// MQB
+#include <mqbplug_authenticator.h>
+
 // BDE
 #include <bsl_functional.h>
 #include <bsl_memory.h>
@@ -137,6 +140,10 @@ class InitialConnectionContext {
     /// The NegotiationContext updated upon receiving a negotiation message.
     bsl::shared_ptr<NegotiationContext> d_negotiationCtxSp;
 
+    /// The result of authentication.
+    // TODO: shared_ptr or managedPtr?
+    bsl::shared_ptr<mqbplug::AuthenticationResult> d_authenticationResult;
+
   public:
     // CREATORS
 
@@ -157,6 +164,8 @@ class InitialConnectionContext {
         const bsl::shared_ptr<AuthenticationContext>& value);
     InitialConnectionContext&
     setNegotiationContext(const bsl::shared_ptr<NegotiationContext>& value);
+    InitialConnectionContext& setAuthenticationResult(
+        const bsl::shared_ptr<mqbplug::AuthenticationResult>& value);
 
     // ACCESSORS
 
@@ -169,6 +178,8 @@ class InitialConnectionContext {
     const bsl::shared_ptr<AuthenticationContext>&
                                                authenticationContext() const;
     const bsl::shared_ptr<NegotiationContext>& negotiationContext() const;
+    const bsl::shared_ptr<mqbplug::AuthenticationResult>
+    authenticationResult() const;
 };
 
 }  // close package namespace
