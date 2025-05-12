@@ -29,22 +29,33 @@
 namespace BloombergLP {
 namespace bmqauthnbasic {
 
-// -----------------------------
-// class BasicAuthenticationData
-// -----------------------------
+// -------------------------------
+// class BasicAuthenticationResult
+// -------------------------------
 
-BasicAuthenticationData::BasicAuthenticationData(
-    const bsl::vector<char>& authPayload,
-    const bsl::string&       clientIpAddress)
-: d_authPayload(authPayload)
-, d_clientIpAddress(clientIpAddress)
+BasicAuthenticationResult::BasicAuthenticationResult(
+    const bslstl::StringRef& principal,
+    bsls::Types::Int64       lifetimeMs,
+    bslma::Allocator*        allocator)
+: d_principal(principal)
+, d_lifetimeMs(lifetimeMs)
+, d_allocator_p(allocator)
 {
-    // NOTHING
 }
 
-BasicAuthenticationData::~BasicAuthenticationData()
+BasicAuthenticationResult::~BasicAuthenticationResult()
 {
-    // NOTHING
+}
+
+const bsl::string& BasicAuthenticationResult::principal() const
+{
+    return d_principal;
+}
+
+const bsl::optional<bsls::Types::Int64>&
+BasicAuthenticationResult::lifetimeMs() const
+{
+    return d_lifetimeMs;
 }
 
 // ------------------------
@@ -65,16 +76,15 @@ BasicAuthenticator::~BasicAuthenticator()
 }
 
 int BasicAuthenticator::authenticate(
-    bsl::ostream&                      errorDescription,
-    mqbplug::AuthenticationResult*     result,
-    const mqbplug::AuthenticationData& input) const
+    bsl::ostream&                                   errorDescription,
+    bsl::shared_ptr<mqbplug::AuthenticationResult>* result,
+    const mqbplug::AuthenticationData&              input) const
 {
-    BSLS_ASSERT_SAFE(result);
+    bsl::string principal(input.authnPayload().data());
 
-    bsl::string principal(input.authPayload().data());
-
-    result->setLifetimeMs(600 * 1000);
-    result->setPrincipal(principal);
+    *result = bsl::allocate_shared<BasicAuthenticationResult>(d_allocator_p,
+                                                              principal,
+                                                              600 * 1000);
 
     return 0;
 }

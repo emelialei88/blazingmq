@@ -36,33 +36,36 @@
 namespace BloombergLP {
 namespace bmqauthnbasic {
 
-// =============================
-// class BasicAuthenticationData
-// =============================
+// ==========================
+// class AuthenticationResult
+// ==========================
 
-class BasicAuthenticationData : public mqbplug::AuthenticationData {
+class BasicAuthenticationResult : public mqbplug::AuthenticationResult {
   private:
-    // PRIVATE TYPES
-    bsl::vector<char> d_authPayload;
-    bsl::string       d_clientIpAddress;
-
-  private:
-    // PRIVATE ACCESSORS
+    // DATA
+    bsl::string                       d_principal;
+    bsl::optional<bsls::Types::Int64> d_lifetimeMs;
+    bslma::Allocator*                 d_allocator_p;
 
   public:
+    // TRAITS
+    BSLMF_NESTED_TRAIT_DECLARATION(BasicAuthenticationResult,
+                                   bslma::UsesBslmaAllocator)
+
     // CREATORS
-    BasicAuthenticationData(const bsl::vector<char>& authPayload,
-                            const bsl::string&       clientIpAddress);
 
-    ~BasicAuthenticationData() BSLS_KEYWORD_OVERRIDE;
+    /// Construct this object using the optionally specified `allocator`.
+    BasicAuthenticationResult(const bslstl::StringRef& principal,
+                              bsls::Types::Int64       lifetimeMs,
+                              bslma::Allocator*        allocator);
 
-    // ACESSORS
+    ~BasicAuthenticationResult() BSLS_KEYWORD_OVERRIDE;
 
-    /// Return the authentication material provided by the client.
-    const bsl::vector<char>& authPayload() const BSLS_KEYWORD_OVERRIDE;
+    // ACCESSORS
 
-    /// Return the IP Address of the client.
-    bslstl::StringRef clientIpAddress() const BSLS_KEYWORD_OVERRIDE;
+    const bsl::string& principal() const BSLS_KEYWORD_OVERRIDE;
+    const bsl::optional<bsls::Types::Int64>&
+    lifetimeMs() const BSLS_KEYWORD_OVERRIDE;
 };
 
 // ========================
@@ -71,12 +74,7 @@ class BasicAuthenticationData : public mqbplug::AuthenticationData {
 
 class BasicAuthenticator : public mqbplug::Authenticator {
     // CLASS-SCOPE CATEGORY
-    BALL_LOG_SET_CLASS_CATEGORY("MQBAUTHN.BASICAUTHENTICATOR");
-
-  private:
-    // PRIVATE TYPES
-    bsl::vector<char> d_authPayload;
-    bsl::string       d_clientIpAddress;
+    BALL_LOG_SET_CLASS_CATEGORY("BMQAUTHNBASIC.BASICAUTHENTICATOR");
 
   private:
     // DATA
@@ -116,8 +114,8 @@ class BasicAuthenticator : public mqbplug::Authenticator {
     /// - Return a non-zero plugin-specific return code upon failure, and
     ///   populate the specified `errorDescription` with a brief reason for
     ///   logging purposes.
-    int authenticate(bsl::ostream&                      errorDescript,
-                     mqbplug::AuthenticationResult*     result,
+    int authenticate(bsl::ostream& errorDescription,
+                     bsl::shared_ptr<mqbplug::AuthenticationResult>* result,
                      const mqbplug::AuthenticationData& input) const
         BSLS_KEYWORD_OVERRIDE;
 
@@ -151,20 +149,6 @@ class BasicAuthenticatorPluginFactory
 // ============================================================================
 //                             INLINE DEFINITIONS
 // ============================================================================
-
-// -----------------------------
-// class BasicAuthenticationData
-// -----------------------------
-
-inline const bsl::vector<char>& BasicAuthenticationData::authPayload() const
-{
-    return d_authPayload;
-}
-
-inline bslstl::StringRef BasicAuthenticationData::clientIpAddress() const
-{
-    return d_clientIpAddress;
-}
 
 // ------------------------
 // class BasicAuthenticator
