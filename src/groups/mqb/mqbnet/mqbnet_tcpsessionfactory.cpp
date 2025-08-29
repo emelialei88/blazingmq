@@ -403,7 +403,7 @@ void TCPSessionFactory::readCallback(const bmqio::Status& status,
         // here to preserve the same behavior in NTZ as BTE and prevent a
         // warning from being logged.
 
-        channelInfo->d_channel_p->close();
+        channelInfo->d_channel_sp->close();
         return;  // RETURN
     }
 
@@ -416,10 +416,10 @@ void TCPSessionFactory::readCallback(const bmqio::Status& status,
         BALL_LOG_ERROR << "#TCP_READ_ERROR "
                        << channelInfo->d_session_sp->description()
                        << ": ReadCallback error [status: " << status
-                       << ", channel: '" << channelInfo->d_channel_p << "']";
+                       << ", channel: '" << channelInfo->d_channel_sp << "']";
 
         // Nothing much we can do, close the channel
-        channelInfo->d_channel_p->close();
+        channelInfo->d_channel_sp->close();
         return;  // RETURN
     }
 
@@ -442,11 +442,11 @@ void TCPSessionFactory::readCallback(const bmqio::Status& status,
                        << channelInfo->d_session_sp->description()
                        << ": ReadCallback unrecoverable error "
                        << "[status: " << status << ", channel: '"
-                       << channelInfo->d_channel_p << "']:\n"
+                       << channelInfo->d_channel_sp << "']:\n"
                        << bmqu::BlobStartHexDumper(blob);
 
         // Nothing much we can do, close the channel
-        channelInfo->d_channel_p->close();
+        channelInfo->d_channel_sp->close();
         return;  // RETURN
     }
 
@@ -476,7 +476,7 @@ void TCPSessionFactory::readCallback(const bmqio::Status& status,
             continue;  // CONTINUE
         }
 
-        if (channelInfo->d_monitor.checkData(channelInfo->d_channel_p,
+        if (channelInfo->d_monitor.checkData(channelInfo->d_channel_sp.get(),
                                              event)) {
             channelInfo->d_eventProcessor_p->processEvent(
                 event,
@@ -578,12 +578,12 @@ void TCPSessionFactory::negotiationComplete(
             // Enable/Disable heartbeating under the lock
             // If the 'result' below is 'false' and the channel gets closed,
             // then 'onClose' must be called and since the session is inserted
-            // into 'd_channels', 'onClose' will disable heartbeat under lock.
+            // into 'd_channels', 'onClose' will disable heartbeat.
             d_scheduler_p->scheduleEvent(
                 bsls::TimeInterval(0),
                 bdlf::BindUtil::bind(&TCPSessionFactory::enableHeartbeat,
                                      this,
-                                     info.get()));
+                                     info));
         }
     }  // close mutex lock guard                                      // UNLOCK
 
@@ -758,24 +758,25 @@ void TCPSessionFactory::onClose(const bsl::shared_ptr<bmqio::Channel>& channel,
         if (it != d_channels.end()) {
             channelInfo = it->second;
             d_channels.erase(it);
-
-            // Remove from heartbeat monitored channels under the lock
-            if (channelInfo->d_monitor.isHearbeatEnabled() &&
-                d_heartbeatSchedulerActive) {
-                // NOTE: When shutting down, we don't care about heartbeat
-                //       verifying the channel, therefore, as an optimization
-                //       to avoid the one-by-one disable for each channel (as
-                //       they all will get closed at this time), the 'stop()'
-                //       sequence cancels the recurring event and wait before
-                //       closing the channels, so we don't need to
-                //       'disableHeartbeat' in this case.
-                d_scheduler_p->scheduleEvent(
-                    bsls::TimeInterval(0),
-                    bdlf::BindUtil::bind(&TCPSessionFactory::disableHeartbeat,
-                                         this,
-                                         channelInfo));
-            }
         }
+
+        // Synchronously remove from heartbeat monitored channels
+        if (channelInfo->d_monitor.isHearbeatEnabled() &&
+            d_heartbeatSchedulerActive) {
+            // NOTE: When shutting down, we don't care about heartbeat
+            //       verifying the channel, therefore, as an optimization to
+            //       avoid the one-by-one disable for each channel (as they all
+            //       will get closed at this time), the 'stop()' sequence
+            //       cancels the recurring event and wait before closing the
+            //       channels, so we don't need to 'disableHeartbeat' in this
+            //       case.
+            d_scheduler_p->scheduleEvent(
+                bsls::TimeInterval(0),
+                bdlf::BindUtil::bind(&TCPSessionFactory::disableHeartbeat,
+                                     this,
+                                     channel.get()));
+        }
+
         d_ports.onDeleteChannelContext(port);
     }  // close mutex lock guard                                      // UNLOCK
 
@@ -813,11 +814,12 @@ void TCPSessionFactory::onHeartbeatSchedulerEvent()
 {
     // executed by the *SCHEDULER* thread
 
-    for (bsl::unordered_map<bmqio::Channel*, ChannelInfo*>::const_iterator it =
+    for (bsl::unordered_map<const bmqio::Channel*,
+                            bsl::shared_ptr<ChannelInfo> >::const_iterator it =
              d_heartbeatChannels.begin();
          it != d_heartbeatChannels.end();) {
-        ChannelInfo* info = it->second;
-        if (!info->d_monitor.checkHeartbeat(info->d_channel_p)) {
+        ChannelInfo* info = it->second.get();
+        if (!info->d_monitor.checkHeartbeat(info->d_channel_sp.get())) {
             const Session* session = info->d_session_sp.get();
             BSLS_ASSERT_SAFE(session);
             const ClusterNode* node = session->clusterNode();
@@ -828,10 +830,10 @@ void TCPSessionFactory::onHeartbeatSchedulerEvent()
                           << info->d_monitor.maxMissedHeartbeats()
                           << " missed heartbeats [session: '"
                           << session->description() << "', channel: '"
-                          << info->d_channel_p << "', node: '"
+                          << info->d_channel_sp << "', node: '"
                           << (node ? node->nodeDescription() : "") << "' ]";
 
-            info->d_channel_p->close();
+            info->d_channel_sp->close();
             // Avoid interference with new connection on the channel
             it = d_heartbeatChannels.erase(it);
         }
@@ -841,26 +843,30 @@ void TCPSessionFactory::onHeartbeatSchedulerEvent()
     }
 }
 
-void TCPSessionFactory::enableHeartbeat(ChannelInfo* channelInfo)
+void TCPSessionFactory::enableHeartbeat(
+    const bsl::shared_ptr<ChannelInfo>& channelInfo_sp)
 {
     // executed by the *SCHEDULER* thread
 
-    d_heartbeatChannels[channelInfo->d_channel_p] = channelInfo;
+    d_heartbeatChannels[channelInfo_sp->d_channel_sp.get()] = channelInfo_sp;
 }
 
-void TCPSessionFactory::disableHeartbeat(
-    const bsl::shared_ptr<ChannelInfo>& channelInfo)
+void TCPSessionFactory::disableHeartbeat(const bmqio::Channel* channel_p)
 {
     // executed by the *SCHEDULER* thread
-    BSLS_ASSERT_SAFE(channelInfo);
-    BSLS_ASSERT_SAFE(channelInfo->d_session_sp);
+
+    const bsl::shared_ptr<ChannelInfo>& channelInfo_sp =
+        d_heartbeatChannels[channel_p];
+
+    BSLS_ASSERT_SAFE(channelInfo_sp);
+    BSLS_ASSERT_SAFE(channelInfo_sp->d_session_sp);
 
     BALL_LOG_INFO << "Disabling TCPSessionFactory '" << d_config.name()
                   << "' Heartbeat for [session: '"
-                  << channelInfo->d_session_sp->description()
-                  << "', channel: '" << channelInfo->d_channel_p << "' ]";
+                  << channelInfo_sp->d_session_sp->description()
+                  << "', channel: '" << channelInfo_sp->d_channel_sp << "' ]";
 
-    d_heartbeatChannels.erase(channelInfo->d_channel_p);
+    d_heartbeatChannels.erase(channel_p);
 }
 
 void TCPSessionFactory::logOpenSessionTime(
@@ -1510,11 +1516,11 @@ bool TCPSessionFactory::isEndpointLoopback(const bslstl::StringRef& uri) const
 // ------------------------------------
 
 TCPSessionFactory::ChannelInfo::ChannelInfo(
-    const bsl::shared_ptr<bmqio::Channel>& channel,
+    const bsl::shared_ptr<bmqio::Channel>& channel_sp,
     const InitialConnectionContext&        context,
     int                                    initialMissedHeartbeatCounter,
     const bsl::shared_ptr<Session>&        monitoredSession)
-: d_channel_p(channel.get())
+: d_channel_sp(channel_sp)
 , d_session_sp(monitoredSession)
 , d_eventProcessor_p(context.negotiationContext()->d_eventProcessor_p)
 , d_monitor(context.negotiationContext()->d_maxMissedHeartbeat,
