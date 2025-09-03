@@ -564,6 +564,10 @@ void TCPSessionFactory::negotiationComplete(
                            monitoredSession);
         // See comments in 'calculateInitialMissedHbCounter'.
 
+        BALL_LOG_INFO << "Insert into `d_channels`: channelInfo " << info.get()
+                      << " for channel " << channel.get()
+                      << ". peerUri = " << channel->peerUri();
+
         bsl::pair<bmqio::Channel*, ChannelInfoSp> toInsert(channel.get(),
                                                            info);
         inserted = d_channels.insert(toInsert);
@@ -757,6 +761,12 @@ void TCPSessionFactory::onClose(const bsl::shared_ptr<bmqio::Channel>& channel,
         ChannelMap::const_iterator it = d_channels.find(channel.get());
         if (it != d_channels.end()) {
             channelInfo = it->second;
+
+            BALL_LOG_INFO << "Remove from `d_channels`: channelInfo "
+                          << channelInfo.get() << " for channel "
+                          << channel.get()
+                          << ". peerUri = " << channel->peerUri();
+
             d_channels.erase(it);
         }
 
@@ -848,6 +858,14 @@ void TCPSessionFactory::enableHeartbeat(
 {
     // executed by the *SCHEDULER* thread
 
+    BSLS_ASSERT_SAFE(channelInfo_sp);
+
+    BALL_LOG_INFO
+        << "[enableHeartbeat] Insert into `d_heartbeatChannels`: channelInfo "
+        << channelInfo_sp.get() << " for channel "
+        << channelInfo_sp->d_channel_sp.get()
+        << ". peerUri = " << channelInfo_sp->d_channel_sp->peerUri();
+
     d_heartbeatChannels[channelInfo_sp->d_channel_sp.get()] = channelInfo_sp;
 }
 
@@ -855,8 +873,25 @@ void TCPSessionFactory::disableHeartbeat(const bmqio::Channel* channel_p)
 {
     // executed by the *SCHEDULER* thread
 
-    const bsl::shared_ptr<ChannelInfo>& channelInfo_sp =
-        d_heartbeatChannels[channel_p];
+    bsl::unordered_map<const bmqio::Channel*,
+                       bsl::shared_ptr<ChannelInfo> >::const_iterator it =
+        d_heartbeatChannels.find(channel_p);
+    if (it == d_heartbeatChannels.end()) {
+        BALL_LOG_INFO << "[disableHeartbeat] Can't find channel_p = "
+                      << channel_p << " in d_heartbeatChannels";
+        return;  // RETURN
+    }
+
+    const bsl::shared_ptr<ChannelInfo>& channelInfo_sp = it->second;
+
+    BALL_LOG_INFO << "[disableHeartbeat] channel_p = " << channel_p
+                  << "channelInfo = " << channelInfo_sp.get();
+
+    BALL_LOG_INFO
+        << "[disableHeartbeat] Erase from `d_heartbeatChannels`: channelInfo "
+        << channelInfo_sp.get() << " for channel "
+        << channelInfo_sp->d_channel_sp.get()
+        << ". peerUri = " << channelInfo_sp->d_channel_sp->peerUri();
 
     BSLS_ASSERT_SAFE(channelInfo_sp);
     BSLS_ASSERT_SAFE(channelInfo_sp->d_session_sp);
