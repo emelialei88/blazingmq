@@ -66,7 +66,7 @@ namespace bmqp_ctrlmsg {
 class AppIdInfo;
 }
 namespace bmqp_ctrlmsg {
-class AuthenticateRequest;
+class AuthenticationRequest;
 }
 namespace bmqp_ctrlmsg {
 class CloseQueueResponse;
@@ -243,7 +243,7 @@ namespace bmqp_ctrlmsg {
 class SyncPointOffsetPair;
 }
 namespace bmqp_ctrlmsg {
-class AuthenticateResponse;
+class AuthenticationResponse;
 }
 namespace bmqp_ctrlmsg {
 class BrokerResponse;
@@ -994,11 +994,11 @@ struct bdlat_UsesDefaultValueFlag<bmqp_ctrlmsg::AppIdInfo> : bsl::true_type {};
 
 namespace bmqp_ctrlmsg {
 
-// =========================
-// class AuthenticateRequest
-// =========================
+// ===========================
+// class AuthenticationRequest
+// ===========================
 
-class AuthenticateRequest {
+class AuthenticationRequest {
     // This request is a messages sent from a client to a broker during session
     // initiation or reauthentication.  The message indicates the client is
     // attempting to authenticate with the supplied authentication material to
@@ -1036,29 +1036,29 @@ class AuthenticateRequest {
     // exists, and 0 otherwise.
 
     // CREATORS
-    explicit AuthenticateRequest(bslma::Allocator* basicAllocator = 0);
-    // Create an object of type 'AuthenticateRequest' having the default
+    explicit AuthenticationRequest(bslma::Allocator* basicAllocator = 0);
+    // Create an object of type 'AuthenticationRequest' having the default
     // value.  Use the optionally specified 'basicAllocator' to supply
     // memory.  If 'basicAllocator' is 0, the currently installed default
     // allocator is used.
 
-    AuthenticateRequest(const AuthenticateRequest& original,
-                        bslma::Allocator*          basicAllocator = 0);
-    // Create an object of type 'AuthenticateRequest' having the value of
+    AuthenticationRequest(const AuthenticationRequest& original,
+                          bslma::Allocator*            basicAllocator = 0);
+    // Create an object of type 'AuthenticationRequest' having the value of
     // the specified 'original' object.  Use the optionally specified
     // 'basicAllocator' to supply memory.  If 'basicAllocator' is 0, the
     // currently installed default allocator is used.
 
 #if defined(BSLS_COMPILERFEATURES_SUPPORT_RVALUE_REFERENCES) &&               \
     defined(BSLS_COMPILERFEATURES_SUPPORT_NOEXCEPT)
-    AuthenticateRequest(AuthenticateRequest&& original) noexcept;
-    // Create an object of type 'AuthenticateRequest' having the value of
+    AuthenticationRequest(AuthenticationRequest&& original) noexcept;
+    // Create an object of type 'AuthenticationRequest' having the value of
     // the specified 'original' object.  After performing this action, the
     // 'original' object will be left in a valid, but unspecified state.
 
-    AuthenticateRequest(AuthenticateRequest&& original,
-                        bslma::Allocator*     basicAllocator);
-    // Create an object of type 'AuthenticateRequest' having the value of
+    AuthenticationRequest(AuthenticationRequest&& original,
+                          bslma::Allocator*       basicAllocator);
+    // Create an object of type 'AuthenticationRequest' having the value of
     // the specified 'original' object.  After performing this action, the
     // 'original' object will be left in a valid, but unspecified state.
     // Use the optionally specified 'basicAllocator' to supply memory.  If
@@ -1066,16 +1066,16 @@ class AuthenticateRequest {
     // used.
 #endif
 
-    ~AuthenticateRequest();
+    ~AuthenticationRequest();
     // Destroy this object.
 
     // MANIPULATORS
-    AuthenticateRequest& operator=(const AuthenticateRequest& rhs);
+    AuthenticationRequest& operator=(const AuthenticationRequest& rhs);
     // Assign to this object the value of the specified 'rhs' object.
 
 #if defined(BSLS_COMPILERFEATURES_SUPPORT_RVALUE_REFERENCES) &&               \
     defined(BSLS_COMPILERFEATURES_SUPPORT_NOEXCEPT)
-    AuthenticateRequest& operator=(AuthenticateRequest&& rhs);
+    AuthenticationRequest& operator=(AuthenticationRequest&& rhs);
     // Assign to this object the value of the specified 'rhs' object.
     // After performing this action, the 'rhs' object will be left in a
     // valid, but unspecified state.
@@ -1174,8 +1174,8 @@ class AuthenticateRequest {
     // attribute of this object.
 
     // HIDDEN FRIENDS
-    friend bool operator==(const AuthenticateRequest& lhs,
-                           const AuthenticateRequest& rhs)
+    friend bool operator==(const AuthenticationRequest& lhs,
+                           const AuthenticationRequest& rhs)
     // Return 'true' if the specified 'lhs' and 'rhs' attribute objects
     // have the same value, and 'false' otherwise.  Two attribute objects
     // have the same value if each respective attribute has the same value.
@@ -1183,15 +1183,15 @@ class AuthenticateRequest {
         return lhs.mechanism() == rhs.mechanism() && lhs.data() == rhs.data();
     }
 
-    friend bool operator!=(const AuthenticateRequest& lhs,
-                           const AuthenticateRequest& rhs)
+    friend bool operator!=(const AuthenticationRequest& lhs,
+                           const AuthenticationRequest& rhs)
     // Returns '!(lhs == rhs)'
     {
         return !(lhs == rhs);
     }
 
-    friend bsl::ostream& operator<<(bsl::ostream&              stream,
-                                    const AuthenticateRequest& rhs)
+    friend bsl::ostream& operator<<(bsl::ostream&                stream,
+                                    const AuthenticationRequest& rhs)
     // Format the specified 'rhs' to the specified output 'stream' and
     // return a reference to the modifiable 'stream'.
     {
@@ -1199,12 +1199,12 @@ class AuthenticateRequest {
     }
 
     template <typename t_HASH_ALGORITHM>
-    friend void hashAppend(t_HASH_ALGORITHM&          hashAlg,
-                           const AuthenticateRequest& object)
+    friend void hashAppend(t_HASH_ALGORITHM&            hashAlg,
+                           const AuthenticationRequest& object)
     // Pass the specified 'object' to the specified 'hashAlg'.  This
     // function integrates with the 'bslh' modular hashing system and
     // effectively provides a 'bsl::hash' specialization for
-    // 'AuthenticateRequest'.
+    // 'AuthenticationRequest'.
     {
         using bslh::hashAppend;
         hashAppend(hashAlg, object.mechanism());
@@ -1217,7 +1217,7 @@ class AuthenticateRequest {
 // TRAITS
 
 BDLAT_DECL_SEQUENCE_WITH_ALLOCATOR_BITWISEMOVEABLE_TRAITS(
-    bmqp_ctrlmsg::AuthenticateRequest)
+    bmqp_ctrlmsg::AuthenticationRequest)
 
 namespace bmqp_ctrlmsg {
 
@@ -13735,12 +13735,12 @@ struct bdlat_UsesDefaultValueFlag<bmqp_ctrlmsg::SyncPointOffsetPair>
 
 namespace bmqp_ctrlmsg {
 
-// ==========================
-// class AuthenticateResponse
-// ==========================
+// ============================
+// class AuthenticationResponse
+// ============================
 
-class AuthenticateResponse {
-    // Response of an 'AuthenticateRequest' request indicating the result of
+class AuthenticationResponse {
+    // Response of an 'AuthenticationRequest' request indicating the result of
     // the operation.  The message is sent to a client from a broker during
     // authentication.
     // status.....: Status of the request lifetimeMs.: The duration (in
@@ -13778,46 +13778,47 @@ class AuthenticateResponse {
     // exists, and 0 otherwise.
 
     // CREATORS
-    explicit AuthenticateResponse(bslma::Allocator* basicAllocator = 0);
-    // Create an object of type 'AuthenticateResponse' having the default
+    explicit AuthenticationResponse(bslma::Allocator* basicAllocator = 0);
+    // Create an object of type 'AuthenticationResponse' having the default
     // value.  Use the optionally specified 'basicAllocator' to supply
     // memory.  If 'basicAllocator' is 0, the currently installed default
     // allocator is used.
 
-    AuthenticateResponse(const AuthenticateResponse& original,
-                         bslma::Allocator*           basicAllocator = 0);
-    // Create an object of type 'AuthenticateResponse' having the value of
-    // the specified 'original' object.  Use the optionally specified
+    AuthenticationResponse(const AuthenticationResponse& original,
+                           bslma::Allocator*             basicAllocator = 0);
+    // Create an object of type 'AuthenticationResponse' having the value
+    // of the specified 'original' object.  Use the optionally specified
     // 'basicAllocator' to supply memory.  If 'basicAllocator' is 0, the
     // currently installed default allocator is used.
 
 #if defined(BSLS_COMPILERFEATURES_SUPPORT_RVALUE_REFERENCES) &&               \
     defined(BSLS_COMPILERFEATURES_SUPPORT_NOEXCEPT)
-    AuthenticateResponse(AuthenticateResponse&& original) noexcept;
-    // Create an object of type 'AuthenticateResponse' having the value of
-    // the specified 'original' object.  After performing this action, the
-    // 'original' object will be left in a valid, but unspecified state.
+    AuthenticationResponse(AuthenticationResponse&& original) noexcept;
+    // Create an object of type 'AuthenticationResponse' having the value
+    // of the specified 'original' object.  After performing this action,
+    // the 'original' object will be left in a valid, but unspecified
+    // state.
 
-    AuthenticateResponse(AuthenticateResponse&& original,
-                         bslma::Allocator*      basicAllocator);
-    // Create an object of type 'AuthenticateResponse' having the value of
-    // the specified 'original' object.  After performing this action, the
-    // 'original' object will be left in a valid, but unspecified state.
-    // Use the optionally specified 'basicAllocator' to supply memory.  If
-    // 'basicAllocator' is 0, the currently installed default allocator is
-    // used.
+    AuthenticationResponse(AuthenticationResponse&& original,
+                           bslma::Allocator*        basicAllocator);
+    // Create an object of type 'AuthenticationResponse' having the value
+    // of the specified 'original' object.  After performing this action,
+    // the 'original' object will be left in a valid, but unspecified
+    // state.  Use the optionally specified 'basicAllocator' to supply
+    // memory.  If 'basicAllocator' is 0, the currently installed default
+    // allocator is used.
 #endif
 
-    ~AuthenticateResponse();
+    ~AuthenticationResponse();
     // Destroy this object.
 
     // MANIPULATORS
-    AuthenticateResponse& operator=(const AuthenticateResponse& rhs);
+    AuthenticationResponse& operator=(const AuthenticationResponse& rhs);
     // Assign to this object the value of the specified 'rhs' object.
 
 #if defined(BSLS_COMPILERFEATURES_SUPPORT_RVALUE_REFERENCES) &&               \
     defined(BSLS_COMPILERFEATURES_SUPPORT_NOEXCEPT)
-    AuthenticateResponse& operator=(AuthenticateResponse&& rhs);
+    AuthenticationResponse& operator=(AuthenticationResponse&& rhs);
     // Assign to this object the value of the specified 'rhs' object.
     // After performing this action, the 'rhs' object will be left in a
     // valid, but unspecified state.
@@ -13916,8 +13917,8 @@ class AuthenticateResponse {
     // "LifetimeMs" attribute of this object.
 
     // HIDDEN FRIENDS
-    friend bool operator==(const AuthenticateResponse& lhs,
-                           const AuthenticateResponse& rhs)
+    friend bool operator==(const AuthenticationResponse& lhs,
+                           const AuthenticationResponse& rhs)
     // Return 'true' if the specified 'lhs' and 'rhs' attribute objects
     // have the same value, and 'false' otherwise.  Two attribute objects
     // have the same value if each respective attribute has the same value.
@@ -13926,15 +13927,15 @@ class AuthenticateResponse {
                lhs.lifetimeMs() == rhs.lifetimeMs();
     }
 
-    friend bool operator!=(const AuthenticateResponse& lhs,
-                           const AuthenticateResponse& rhs)
+    friend bool operator!=(const AuthenticationResponse& lhs,
+                           const AuthenticationResponse& rhs)
     // Returns '!(lhs == rhs)'
     {
         return !(lhs == rhs);
     }
 
-    friend bsl::ostream& operator<<(bsl::ostream&               stream,
-                                    const AuthenticateResponse& rhs)
+    friend bsl::ostream& operator<<(bsl::ostream&                 stream,
+                                    const AuthenticationResponse& rhs)
     // Format the specified 'rhs' to the specified output 'stream' and
     // return a reference to the modifiable 'stream'.
     {
@@ -13942,12 +13943,12 @@ class AuthenticateResponse {
     }
 
     template <typename t_HASH_ALGORITHM>
-    friend void hashAppend(t_HASH_ALGORITHM&           hashAlg,
-                           const AuthenticateResponse& object)
+    friend void hashAppend(t_HASH_ALGORITHM&             hashAlg,
+                           const AuthenticationResponse& object)
     // Pass the specified 'object' to the specified 'hashAlg'.  This
     // function integrates with the 'bslh' modular hashing system and
     // effectively provides a 'bsl::hash' specialization for
-    // 'AuthenticateResponse'.
+    // 'AuthenticationResponse'.
     {
         using bslh::hashAppend;
         hashAppend(hashAlg, object.status());
@@ -13960,7 +13961,7 @@ class AuthenticateResponse {
 // TRAITS
 
 BDLAT_DECL_SEQUENCE_WITH_ALLOCATOR_BITWISEMOVEABLE_TRAITS(
-    bmqp_ctrlmsg::AuthenticateResponse)
+    bmqp_ctrlmsg::AuthenticationResponse)
 
 namespace bmqp_ctrlmsg {
 
@@ -17798,13 +17799,13 @@ class AuthenticationMessage {
     // client or another broker.
     // choice.: enumerates all the different type of authentication packets
     // During negotiation, the process (whether a client using the libbmq SDK,
-    // or a bmqbrkr) sends a 'authenticateRequest' message; to which the remote
-    // peer will reply with a 'authenticateResponse' message.
+    // or a bmqbrkr) sends a 'authenticationRequest' message; to which the
+    // remote peer will reply with a 'authenticationResponse' message.
 
     // INSTANCE DATA
     union {
-        bsls::ObjectBuffer<AuthenticateRequest>  d_authenticateRequest;
-        bsls::ObjectBuffer<AuthenticateResponse> d_authenticateResponse;
+        bsls::ObjectBuffer<AuthenticationRequest>  d_authenticationRequest;
+        bsls::ObjectBuffer<AuthenticationResponse> d_authenticationResponse;
     };
 
     int               d_selectionId;
@@ -17820,16 +17821,16 @@ class AuthenticationMessage {
     // TYPES
 
     enum {
-        SELECTION_ID_UNDEFINED             = -1,
-        SELECTION_ID_AUTHENTICATE_REQUEST  = 0,
-        SELECTION_ID_AUTHENTICATE_RESPONSE = 1
+        SELECTION_ID_UNDEFINED               = -1,
+        SELECTION_ID_AUTHENTICATION_REQUEST  = 0,
+        SELECTION_ID_AUTHENTICATION_RESPONSE = 1
     };
 
     enum { NUM_SELECTIONS = 2 };
 
     enum {
-        SELECTION_INDEX_AUTHENTICATE_REQUEST  = 0,
-        SELECTION_INDEX_AUTHENTICATE_RESPONSE = 1
+        SELECTION_INDEX_AUTHENTICATION_REQUEST  = 0,
+        SELECTION_INDEX_AUTHENTICATION_RESPONSE = 1
     };
 
     // CONSTANTS
@@ -17909,29 +17910,30 @@ class AuthenticationMessage {
     // Return 0 on success, and non-zero value otherwise (i.e., the
     // selection is not found).
 
-    AuthenticateRequest& makeAuthenticateRequest();
-    AuthenticateRequest&
-    makeAuthenticateRequest(const AuthenticateRequest& value);
+    AuthenticationRequest& makeAuthenticationRequest();
+    AuthenticationRequest&
+    makeAuthenticationRequest(const AuthenticationRequest& value);
 #if defined(BSLS_COMPILERFEATURES_SUPPORT_RVALUE_REFERENCES) &&               \
     defined(BSLS_COMPILERFEATURES_SUPPORT_NOEXCEPT)
-    AuthenticateRequest& makeAuthenticateRequest(AuthenticateRequest&& value);
+    AuthenticationRequest&
+    makeAuthenticationRequest(AuthenticationRequest&& value);
 #endif
-    // Set the value of this object to be a "AuthenticateRequest" value.
-    // Optionally specify the 'value' of the "AuthenticateRequest".  If
-    // 'value' is not specified, the default "AuthenticateRequest" value is
-    // used.
+    // Set the value of this object to be a "AuthenticationRequest" value.
+    // Optionally specify the 'value' of the "AuthenticationRequest".  If
+    // 'value' is not specified, the default "AuthenticationRequest" value
+    // is used.
 
-    AuthenticateResponse& makeAuthenticateResponse();
-    AuthenticateResponse&
-    makeAuthenticateResponse(const AuthenticateResponse& value);
+    AuthenticationResponse& makeAuthenticationResponse();
+    AuthenticationResponse&
+    makeAuthenticationResponse(const AuthenticationResponse& value);
 #if defined(BSLS_COMPILERFEATURES_SUPPORT_RVALUE_REFERENCES) &&               \
     defined(BSLS_COMPILERFEATURES_SUPPORT_NOEXCEPT)
-    AuthenticateResponse&
-    makeAuthenticateResponse(AuthenticateResponse&& value);
+    AuthenticationResponse&
+    makeAuthenticationResponse(AuthenticationResponse&& value);
 #endif
-    // Set the value of this object to be a "AuthenticateResponse" value.
-    // Optionally specify the 'value' of the "AuthenticateResponse".  If
-    // 'value' is not specified, the default "AuthenticateResponse" value
+    // Set the value of this object to be a "AuthenticationResponse" value.
+    //  Optionally specify the 'value' of the "AuthenticationResponse".  If
+    // 'value' is not specified, the default "AuthenticationResponse" value
     // is used.
 
     template <typename t_MANIPULATOR>
@@ -17942,17 +17944,17 @@ class AuthenticationMessage {
     // invocation of 'manipulator' if this object has a defined selection,
     // and -1 otherwise.
 
-    AuthenticateRequest& authenticateRequest();
-    // Return a reference to the modifiable "AuthenticateRequest" selection
-    // of this object if "AuthenticateRequest" is the current selection.
-    // The behavior is undefined unless "AuthenticateRequest" is the
-    // selection of this object.
-
-    AuthenticateResponse& authenticateResponse();
-    // Return a reference to the modifiable "AuthenticateResponse"
-    // selection of this object if "AuthenticateResponse" is the current
-    // selection.  The behavior is undefined unless "AuthenticateResponse"
+    AuthenticationRequest& authenticationRequest();
+    // Return a reference to the modifiable "AuthenticationRequest"
+    // selection of this object if "AuthenticationRequest" is the current
+    // selection.  The behavior is undefined unless "AuthenticationRequest"
     // is the selection of this object.
+
+    AuthenticationResponse& authenticationResponse();
+    // Return a reference to the modifiable "AuthenticationResponse"
+    // selection of this object if "AuthenticationResponse" is the current
+    // selection.  The behavior is undefined unless
+    // "AuthenticationResponse" is the selection of this object.
 
     // ACCESSORS
     bsl::ostream&
@@ -17980,25 +17982,25 @@ class AuthenticationMessage {
     // structure.  Return the value returned from the invocation of
     // 'accessor' if this object has a defined selection, and -1 otherwise.
 
-    const AuthenticateRequest& authenticateRequest() const;
-    // Return a reference to the non-modifiable "AuthenticateRequest"
-    // selection of this object if "AuthenticateRequest" is the current
-    // selection.  The behavior is undefined unless "AuthenticateRequest"
+    const AuthenticationRequest& authenticationRequest() const;
+    // Return a reference to the non-modifiable "AuthenticationRequest"
+    // selection of this object if "AuthenticationRequest" is the current
+    // selection.  The behavior is undefined unless "AuthenticationRequest"
     // is the selection of this object.
 
-    const AuthenticateResponse& authenticateResponse() const;
-    // Return a reference to the non-modifiable "AuthenticateResponse"
-    // selection of this object if "AuthenticateResponse" is the current
-    // selection.  The behavior is undefined unless "AuthenticateResponse"
-    // is the selection of this object.
+    const AuthenticationResponse& authenticationResponse() const;
+    // Return a reference to the non-modifiable "AuthenticationResponse"
+    // selection of this object if "AuthenticationResponse" is the current
+    // selection.  The behavior is undefined unless
+    // "AuthenticationResponse" is the selection of this object.
 
-    bool isAuthenticateRequestValue() const;
-    // Return 'true' if the value of this object is a "AuthenticateRequest"
-    // value, and return 'false' otherwise.
-
-    bool isAuthenticateResponseValue() const;
+    bool isAuthenticationRequestValue() const;
     // Return 'true' if the value of this object is a
-    // "AuthenticateResponse" value, and return 'false' otherwise.
+    // "AuthenticationRequest" value, and return 'false' otherwise.
+
+    bool isAuthenticationResponseValue() const;
+    // Return 'true' if the value of this object is a
+    // "AuthenticationResponse" value, and return 'false' otherwise.
 
     bool isUndefinedValue() const;
     // Return 'true' if the value of this object is undefined, and 'false'
@@ -23291,14 +23293,14 @@ inline const bsl::vector<char>& AppIdInfo::appKey() const
     return d_appKey;
 }
 
-// -------------------------
-// class AuthenticateRequest
-// -------------------------
+// ---------------------------
+// class AuthenticationRequest
+// ---------------------------
 
 // CLASS METHODS
 // MANIPULATORS
 template <typename t_MANIPULATOR>
-int AuthenticateRequest::manipulateAttributes(t_MANIPULATOR& manipulator)
+int AuthenticationRequest::manipulateAttributes(t_MANIPULATOR& manipulator)
 {
     int ret;
 
@@ -23317,8 +23319,8 @@ int AuthenticateRequest::manipulateAttributes(t_MANIPULATOR& manipulator)
 }
 
 template <typename t_MANIPULATOR>
-int AuthenticateRequest::manipulateAttribute(t_MANIPULATOR& manipulator,
-                                             int            id)
+int AuthenticationRequest::manipulateAttribute(t_MANIPULATOR& manipulator,
+                                               int            id)
 {
     enum { NOT_FOUND = -1 };
 
@@ -23336,9 +23338,9 @@ int AuthenticateRequest::manipulateAttribute(t_MANIPULATOR& manipulator,
 }
 
 template <typename t_MANIPULATOR>
-int AuthenticateRequest::manipulateAttribute(t_MANIPULATOR& manipulator,
-                                             const char*    name,
-                                             int            nameLength)
+int AuthenticationRequest::manipulateAttribute(t_MANIPULATOR& manipulator,
+                                               const char*    name,
+                                               int            nameLength)
 {
     enum { NOT_FOUND = -1 };
 
@@ -23351,19 +23353,19 @@ int AuthenticateRequest::manipulateAttribute(t_MANIPULATOR& manipulator,
     return manipulateAttribute(manipulator, attributeInfo->d_id);
 }
 
-inline bsl::string& AuthenticateRequest::mechanism()
+inline bsl::string& AuthenticationRequest::mechanism()
 {
     return d_mechanism;
 }
 
-inline bdlb::NullableValue<bsl::vector<char> >& AuthenticateRequest::data()
+inline bdlb::NullableValue<bsl::vector<char> >& AuthenticationRequest::data()
 {
     return d_data;
 }
 
 // ACCESSORS
 template <typename t_ACCESSOR>
-int AuthenticateRequest::accessAttributes(t_ACCESSOR& accessor) const
+int AuthenticationRequest::accessAttributes(t_ACCESSOR& accessor) const
 {
     int ret;
 
@@ -23382,7 +23384,7 @@ int AuthenticateRequest::accessAttributes(t_ACCESSOR& accessor) const
 }
 
 template <typename t_ACCESSOR>
-int AuthenticateRequest::accessAttribute(t_ACCESSOR& accessor, int id) const
+int AuthenticationRequest::accessAttribute(t_ACCESSOR& accessor, int id) const
 {
     enum { NOT_FOUND = -1 };
 
@@ -23399,9 +23401,9 @@ int AuthenticateRequest::accessAttribute(t_ACCESSOR& accessor, int id) const
 }
 
 template <typename t_ACCESSOR>
-int AuthenticateRequest::accessAttribute(t_ACCESSOR& accessor,
-                                         const char* name,
-                                         int         nameLength) const
+int AuthenticationRequest::accessAttribute(t_ACCESSOR& accessor,
+                                           const char* name,
+                                           int         nameLength) const
 {
     enum { NOT_FOUND = -1 };
 
@@ -23414,13 +23416,13 @@ int AuthenticateRequest::accessAttribute(t_ACCESSOR& accessor,
     return accessAttribute(accessor, attributeInfo->d_id);
 }
 
-inline const bsl::string& AuthenticateRequest::mechanism() const
+inline const bsl::string& AuthenticationRequest::mechanism() const
 {
     return d_mechanism;
 }
 
 inline const bdlb::NullableValue<bsl::vector<char> >&
-AuthenticateRequest::data() const
+AuthenticationRequest::data() const
 {
     return d_data;
 }
@@ -32148,14 +32150,14 @@ inline bsls::Types::Uint64 SyncPointOffsetPair::offset() const
     return d_offset;
 }
 
-// --------------------------
-// class AuthenticateResponse
-// --------------------------
+// ----------------------------
+// class AuthenticationResponse
+// ----------------------------
 
 // CLASS METHODS
 // MANIPULATORS
 template <typename t_MANIPULATOR>
-int AuthenticateResponse::manipulateAttributes(t_MANIPULATOR& manipulator)
+int AuthenticationResponse::manipulateAttributes(t_MANIPULATOR& manipulator)
 {
     int ret;
 
@@ -32174,8 +32176,8 @@ int AuthenticateResponse::manipulateAttributes(t_MANIPULATOR& manipulator)
 }
 
 template <typename t_MANIPULATOR>
-int AuthenticateResponse::manipulateAttribute(t_MANIPULATOR& manipulator,
-                                              int            id)
+int AuthenticationResponse::manipulateAttribute(t_MANIPULATOR& manipulator,
+                                                int            id)
 {
     enum { NOT_FOUND = -1 };
 
@@ -32193,9 +32195,9 @@ int AuthenticateResponse::manipulateAttribute(t_MANIPULATOR& manipulator,
 }
 
 template <typename t_MANIPULATOR>
-int AuthenticateResponse::manipulateAttribute(t_MANIPULATOR& manipulator,
-                                              const char*    name,
-                                              int            nameLength)
+int AuthenticationResponse::manipulateAttribute(t_MANIPULATOR& manipulator,
+                                                const char*    name,
+                                                int            nameLength)
 {
     enum { NOT_FOUND = -1 };
 
@@ -32208,20 +32210,20 @@ int AuthenticateResponse::manipulateAttribute(t_MANIPULATOR& manipulator,
     return manipulateAttribute(manipulator, attributeInfo->d_id);
 }
 
-inline Status& AuthenticateResponse::status()
+inline Status& AuthenticationResponse::status()
 {
     return d_status;
 }
 
 inline bdlb::NullableValue<bsls::Types::Uint64>&
-AuthenticateResponse::lifetimeMs()
+AuthenticationResponse::lifetimeMs()
 {
     return d_lifetimeMs;
 }
 
 // ACCESSORS
 template <typename t_ACCESSOR>
-int AuthenticateResponse::accessAttributes(t_ACCESSOR& accessor) const
+int AuthenticationResponse::accessAttributes(t_ACCESSOR& accessor) const
 {
     int ret;
 
@@ -32240,7 +32242,7 @@ int AuthenticateResponse::accessAttributes(t_ACCESSOR& accessor) const
 }
 
 template <typename t_ACCESSOR>
-int AuthenticateResponse::accessAttribute(t_ACCESSOR& accessor, int id) const
+int AuthenticationResponse::accessAttribute(t_ACCESSOR& accessor, int id) const
 {
     enum { NOT_FOUND = -1 };
 
@@ -32258,9 +32260,9 @@ int AuthenticateResponse::accessAttribute(t_ACCESSOR& accessor, int id) const
 }
 
 template <typename t_ACCESSOR>
-int AuthenticateResponse::accessAttribute(t_ACCESSOR& accessor,
-                                          const char* name,
-                                          int         nameLength) const
+int AuthenticationResponse::accessAttribute(t_ACCESSOR& accessor,
+                                            const char* name,
+                                            int         nameLength) const
 {
     enum { NOT_FOUND = -1 };
 
@@ -32273,13 +32275,13 @@ int AuthenticateResponse::accessAttribute(t_ACCESSOR& accessor,
     return accessAttribute(accessor, attributeInfo->d_id);
 }
 
-inline const Status& AuthenticateResponse::status() const
+inline const Status& AuthenticationResponse::status() const
 {
     return d_status;
 }
 
 inline const bdlb::NullableValue<bsls::Types::Uint64>&
-AuthenticateResponse::lifetimeMs() const
+AuthenticationResponse::lifetimeMs() const
 {
     return d_lifetimeMs;
 }
@@ -35221,11 +35223,11 @@ void AuthenticationMessage::hashAppendImpl(
     using bslh::hashAppend;
     hashAppend(hashAlgorithm, this->selectionId());
     switch (this->selectionId()) {
-    case Class::SELECTION_ID_AUTHENTICATE_REQUEST:
-        hashAppend(hashAlgorithm, this->authenticateRequest());
+    case Class::SELECTION_ID_AUTHENTICATION_REQUEST:
+        hashAppend(hashAlgorithm, this->authenticationRequest());
         break;
-    case Class::SELECTION_ID_AUTHENTICATE_RESPONSE:
-        hashAppend(hashAlgorithm, this->authenticateResponse());
+    case Class::SELECTION_ID_AUTHENTICATION_RESPONSE:
+        hashAppend(hashAlgorithm, this->authenticationResponse());
         break;
     default: BSLS_ASSERT(this->selectionId() == Class::SELECTION_ID_UNDEFINED);
     }
@@ -35237,10 +35239,12 @@ AuthenticationMessage::isEqualTo(const AuthenticationMessage& rhs) const
     typedef AuthenticationMessage Class;
     if (this->selectionId() == rhs.selectionId()) {
         switch (rhs.selectionId()) {
-        case Class::SELECTION_ID_AUTHENTICATE_REQUEST:
-            return this->authenticateRequest() == rhs.authenticateRequest();
-        case Class::SELECTION_ID_AUTHENTICATE_RESPONSE:
-            return this->authenticateResponse() == rhs.authenticateResponse();
+        case Class::SELECTION_ID_AUTHENTICATION_REQUEST:
+            return this->authenticationRequest() ==
+                   rhs.authenticationRequest();
+        case Class::SELECTION_ID_AUTHENTICATION_RESPONSE:
+            return this->authenticationResponse() ==
+                   rhs.authenticationResponse();
         default:
             BSLS_ASSERT(Class::SELECTION_ID_UNDEFINED == rhs.selectionId());
             return true;
@@ -35269,14 +35273,14 @@ template <typename t_MANIPULATOR>
 int AuthenticationMessage::manipulateSelection(t_MANIPULATOR& manipulator)
 {
     switch (d_selectionId) {
-    case AuthenticationMessage::SELECTION_ID_AUTHENTICATE_REQUEST:
+    case AuthenticationMessage::SELECTION_ID_AUTHENTICATION_REQUEST:
         return manipulator(
-            &d_authenticateRequest.object(),
-            SELECTION_INFO_ARRAY[SELECTION_INDEX_AUTHENTICATE_REQUEST]);
-    case AuthenticationMessage::SELECTION_ID_AUTHENTICATE_RESPONSE:
+            &d_authenticationRequest.object(),
+            SELECTION_INFO_ARRAY[SELECTION_INDEX_AUTHENTICATION_REQUEST]);
+    case AuthenticationMessage::SELECTION_ID_AUTHENTICATION_RESPONSE:
         return manipulator(
-            &d_authenticateResponse.object(),
-            SELECTION_INFO_ARRAY[SELECTION_INDEX_AUTHENTICATE_RESPONSE]);
+            &d_authenticationResponse.object(),
+            SELECTION_INFO_ARRAY[SELECTION_INDEX_AUTHENTICATION_RESPONSE]);
     default:
         BSLS_ASSERT(AuthenticationMessage::SELECTION_ID_UNDEFINED ==
                     d_selectionId);
@@ -35284,16 +35288,16 @@ int AuthenticationMessage::manipulateSelection(t_MANIPULATOR& manipulator)
     }
 }
 
-inline AuthenticateRequest& AuthenticationMessage::authenticateRequest()
+inline AuthenticationRequest& AuthenticationMessage::authenticationRequest()
 {
-    BSLS_ASSERT(SELECTION_ID_AUTHENTICATE_REQUEST == d_selectionId);
-    return d_authenticateRequest.object();
+    BSLS_ASSERT(SELECTION_ID_AUTHENTICATION_REQUEST == d_selectionId);
+    return d_authenticationRequest.object();
 }
 
-inline AuthenticateResponse& AuthenticationMessage::authenticateResponse()
+inline AuthenticationResponse& AuthenticationMessage::authenticationResponse()
 {
-    BSLS_ASSERT(SELECTION_ID_AUTHENTICATE_RESPONSE == d_selectionId);
-    return d_authenticateResponse.object();
+    BSLS_ASSERT(SELECTION_ID_AUTHENTICATION_RESPONSE == d_selectionId);
+    return d_authenticationResponse.object();
 }
 
 // ACCESSORS
@@ -35306,40 +35310,40 @@ template <typename t_ACCESSOR>
 int AuthenticationMessage::accessSelection(t_ACCESSOR& accessor) const
 {
     switch (d_selectionId) {
-    case SELECTION_ID_AUTHENTICATE_REQUEST:
+    case SELECTION_ID_AUTHENTICATION_REQUEST:
         return accessor(
-            d_authenticateRequest.object(),
-            SELECTION_INFO_ARRAY[SELECTION_INDEX_AUTHENTICATE_REQUEST]);
-    case SELECTION_ID_AUTHENTICATE_RESPONSE:
+            d_authenticationRequest.object(),
+            SELECTION_INFO_ARRAY[SELECTION_INDEX_AUTHENTICATION_REQUEST]);
+    case SELECTION_ID_AUTHENTICATION_RESPONSE:
         return accessor(
-            d_authenticateResponse.object(),
-            SELECTION_INFO_ARRAY[SELECTION_INDEX_AUTHENTICATE_RESPONSE]);
+            d_authenticationResponse.object(),
+            SELECTION_INFO_ARRAY[SELECTION_INDEX_AUTHENTICATION_RESPONSE]);
     default: BSLS_ASSERT(SELECTION_ID_UNDEFINED == d_selectionId); return -1;
     }
 }
 
-inline const AuthenticateRequest&
-AuthenticationMessage::authenticateRequest() const
+inline const AuthenticationRequest&
+AuthenticationMessage::authenticationRequest() const
 {
-    BSLS_ASSERT(SELECTION_ID_AUTHENTICATE_REQUEST == d_selectionId);
-    return d_authenticateRequest.object();
+    BSLS_ASSERT(SELECTION_ID_AUTHENTICATION_REQUEST == d_selectionId);
+    return d_authenticationRequest.object();
 }
 
-inline const AuthenticateResponse&
-AuthenticationMessage::authenticateResponse() const
+inline const AuthenticationResponse&
+AuthenticationMessage::authenticationResponse() const
 {
-    BSLS_ASSERT(SELECTION_ID_AUTHENTICATE_RESPONSE == d_selectionId);
-    return d_authenticateResponse.object();
+    BSLS_ASSERT(SELECTION_ID_AUTHENTICATION_RESPONSE == d_selectionId);
+    return d_authenticationResponse.object();
 }
 
-inline bool AuthenticationMessage::isAuthenticateRequestValue() const
+inline bool AuthenticationMessage::isAuthenticationRequestValue() const
 {
-    return SELECTION_ID_AUTHENTICATE_REQUEST == d_selectionId;
+    return SELECTION_ID_AUTHENTICATION_REQUEST == d_selectionId;
 }
 
-inline bool AuthenticationMessage::isAuthenticateResponseValue() const
+inline bool AuthenticationMessage::isAuthenticationResponseValue() const
 {
-    return SELECTION_ID_AUTHENTICATE_RESPONSE == d_selectionId;
+    return SELECTION_ID_AUTHENTICATION_RESPONSE == d_selectionId;
 }
 
 inline bool AuthenticationMessage::isUndefinedValue() const
