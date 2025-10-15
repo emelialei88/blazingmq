@@ -9110,24 +9110,29 @@ namespace mqbcfg {
 
 class AuthenticatorConfig {
     // Top level type for the broker's authentication configurations.
-    // plugins...........: Configurations for authenticator plugins.  A config
-    // should be present for each authenticator plugin enabled on the broker.
-    // anonymousCredential.: Credential used to control anonymous
-    // authentication.  If not set, the broker will use the default anonymous
-    // credential.
+    // authenticators...........: Configuration entries for authenticator
+    // plugins (built-in or external).  Each entry defines settings for a
+    // specific plugin.  All plugins must have unique authentication
+    // mechanisms.  anonymousCredential.: Controls anonymous authentication
+    // behavior.  When specified, the broker uses the provided credential with
+    // a matching plugin from `authenticators`.  When omitted, the broker
+    // defaults to AnonPassAuthenticator for anonymous authentication.
 
     // INSTANCE DATA
-    bsl::vector<AuthenticatorPluginConfig>   d_plugins;
+    bsl::vector<AuthenticatorPluginConfig>   d_authenticators;
     bdlb::NullableValue<AnonymousCredential> d_anonymousCredential;
 
   public:
     // TYPES
-    enum { ATTRIBUTE_ID_PLUGINS = 0, ATTRIBUTE_ID_ANONYMOUS_CREDENTIAL = 1 };
+    enum {
+        ATTRIBUTE_ID_AUTHENTICATORS       = 0,
+        ATTRIBUTE_ID_ANONYMOUS_CREDENTIAL = 1
+    };
 
     enum { NUM_ATTRIBUTES = 2 };
 
     enum {
-        ATTRIBUTE_INDEX_PLUGINS              = 0,
+        ATTRIBUTE_INDEX_AUTHENTICATORS       = 0,
         ATTRIBUTE_INDEX_ANONYMOUS_CREDENTIAL = 1
     };
 
@@ -9227,9 +9232,9 @@ class AuthenticatorConfig {
     // returned from the invocation of 'manipulator' if 'name' identifies
     // an attribute of this class, and -1 otherwise.
 
-    bsl::vector<AuthenticatorPluginConfig>& plugins();
-    // Return a reference to the modifiable "Plugins" attribute of this
-    // object.
+    bsl::vector<AuthenticatorPluginConfig>& authenticators();
+    // Return a reference to the modifiable "Authenticators" attribute of
+    // this object.
 
     bdlb::NullableValue<AnonymousCredential>& anonymousCredential();
     // Return a reference to the modifiable "AnonymousCredential" attribute
@@ -9278,9 +9283,9 @@ class AuthenticatorConfig {
     // invocation of 'accessor' if 'name' identifies an attribute of this
     // class, and -1 otherwise.
 
-    const bsl::vector<AuthenticatorPluginConfig>& plugins() const;
-    // Return a reference offering non-modifiable access to the "Plugins"
-    // attribute of this object.
+    const bsl::vector<AuthenticatorPluginConfig>& authenticators() const;
+    // Return a reference offering non-modifiable access to the
+    // "Authenticators" attribute of this object.
 
     const bdlb::NullableValue<AnonymousCredential>&
     anonymousCredential() const;
@@ -9294,7 +9299,7 @@ class AuthenticatorConfig {
     // have the same value, and 'false' otherwise.  Two attribute objects
     // have the same value if each respective attribute has the same value.
     {
-        return lhs.plugins() == rhs.plugins() &&
+        return lhs.authenticators() == rhs.authenticators() &&
                lhs.anonymousCredential() == rhs.anonymousCredential();
     }
 
@@ -9322,7 +9327,7 @@ class AuthenticatorConfig {
     // 'AuthenticatorConfig'.
     {
         using bslh::hashAppend;
-        hashAppend(hashAlg, object.plugins());
+        hashAppend(hashAlg, object.authenticators());
         hashAppend(hashAlg, object.anonymousCredential());
     }
 };
@@ -18885,8 +18890,8 @@ int AuthenticatorConfig::manipulateAttributes(t_MANIPULATOR& manipulator)
 {
     int ret;
 
-    ret = manipulator(&d_plugins,
-                      ATTRIBUTE_INFO_ARRAY[ATTRIBUTE_INDEX_PLUGINS]);
+    ret = manipulator(&d_authenticators,
+                      ATTRIBUTE_INFO_ARRAY[ATTRIBUTE_INDEX_AUTHENTICATORS]);
     if (ret) {
         return ret;
     }
@@ -18908,9 +18913,10 @@ int AuthenticatorConfig::manipulateAttribute(t_MANIPULATOR& manipulator,
     enum { NOT_FOUND = -1 };
 
     switch (id) {
-    case ATTRIBUTE_ID_PLUGINS: {
-        return manipulator(&d_plugins,
-                           ATTRIBUTE_INFO_ARRAY[ATTRIBUTE_INDEX_PLUGINS]);
+    case ATTRIBUTE_ID_AUTHENTICATORS: {
+        return manipulator(
+            &d_authenticators,
+            ATTRIBUTE_INFO_ARRAY[ATTRIBUTE_INDEX_AUTHENTICATORS]);
     }
     case ATTRIBUTE_ID_ANONYMOUS_CREDENTIAL: {
         return manipulator(
@@ -18937,9 +18943,10 @@ int AuthenticatorConfig::manipulateAttribute(t_MANIPULATOR& manipulator,
     return manipulateAttribute(manipulator, attributeInfo->d_id);
 }
 
-inline bsl::vector<AuthenticatorPluginConfig>& AuthenticatorConfig::plugins()
+inline bsl::vector<AuthenticatorPluginConfig>&
+AuthenticatorConfig::authenticators()
 {
-    return d_plugins;
+    return d_authenticators;
 }
 
 inline bdlb::NullableValue<AnonymousCredential>&
@@ -18954,7 +18961,8 @@ int AuthenticatorConfig::accessAttributes(t_ACCESSOR& accessor) const
 {
     int ret;
 
-    ret = accessor(d_plugins, ATTRIBUTE_INFO_ARRAY[ATTRIBUTE_INDEX_PLUGINS]);
+    ret = accessor(d_authenticators,
+                   ATTRIBUTE_INFO_ARRAY[ATTRIBUTE_INDEX_AUTHENTICATORS]);
     if (ret) {
         return ret;
     }
@@ -18974,9 +18982,9 @@ int AuthenticatorConfig::accessAttribute(t_ACCESSOR& accessor, int id) const
     enum { NOT_FOUND = -1 };
 
     switch (id) {
-    case ATTRIBUTE_ID_PLUGINS: {
-        return accessor(d_plugins,
-                        ATTRIBUTE_INFO_ARRAY[ATTRIBUTE_INDEX_PLUGINS]);
+    case ATTRIBUTE_ID_AUTHENTICATORS: {
+        return accessor(d_authenticators,
+                        ATTRIBUTE_INFO_ARRAY[ATTRIBUTE_INDEX_AUTHENTICATORS]);
     }
     case ATTRIBUTE_ID_ANONYMOUS_CREDENTIAL: {
         return accessor(
@@ -19004,9 +19012,9 @@ int AuthenticatorConfig::accessAttribute(t_ACCESSOR& accessor,
 }
 
 inline const bsl::vector<AuthenticatorPluginConfig>&
-AuthenticatorConfig::plugins() const
+AuthenticatorConfig::authenticators() const
 {
-    return d_plugins;
+    return d_authenticators;
 }
 
 inline const bdlb::NullableValue<AnonymousCredential>&
