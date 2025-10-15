@@ -718,7 +718,7 @@ class TweakFactory:
             route_command_timeout_ms = RouteCommandTimeoutMs()
 
             class Authentication(metaclass=TweakMetaclass):
-                class Plugins(metaclass=TweakMetaclass):
+                class Authenticators(metaclass=TweakMetaclass):
                     class Name(metaclass=TweakMetaclass):
                         def __call__(
                             self, value: typing.Union[str, NoneType]
@@ -785,7 +785,7 @@ class TweakFactory:
 
                     def __call__(self, value: None) -> Callable: ...
 
-                plugins = Plugins()
+                authenticators = Authenticators()
 
                 class AnonymousCredential(metaclass=TweakMetaclass):
                     class Disallow(metaclass=TweakMetaclass):
