@@ -32,6 +32,7 @@ import pytest
 import blazingmq.dev.it.testconstants as tc
 from blazingmq.dev.it.process.rawclient import RawClient
 from blazingmq.dev.it.process.admin import AdminClient
+from blazingmq.dev.it.process.proc import ProcessExitError
 
 from blazingmq.dev.it.fixtures import (  # pylint: disable=unused-import
     Cluster,
@@ -575,41 +576,52 @@ def test_anon_fail_authenticator(single_node: Cluster) -> None:
 # ==============================================================================
 
 
-@start_cluster(False, False)
+def check_fail_to_start(node: Cluster):
+    # Try to start the cluster - should fail due to mismatched mechanism
+    try:
+        with pytest.raises(ProcessExitError) as exc_info:
+            node.start(wait_leader=False)
+    finally:
+        for proc in node.all_processes:
+            proc.check_exit_code = False
+
+    # Verify it's the expected process that failed
+    assert "single" in str(exc_info.value)
+
+    # Verify broker is not running
+    node = node.nodes()[0]
+    assert not node.is_alive(), (
+        "Broker should not be running after trying to start with a wrong configuration"
+    )
+
+
+@start_cluster(False)
 @tweak.broker.app_config.authentication(
     {
         "authenticators": [
             {
-                "name": "BasicAuthenticator",
-                "configs": [
-                    {"key": "user1", "value": {"stringVal": "password1"}},
-                ],
+                "name": "AnonPassAuthenticator",
+                "configs": [],
             },
             {
-                "name": "BasicAuthenticator",  # Duplicate mechanism BASIC
-                "configs": [
-                    {"key": "user2", "value": {"stringVal": "password2"}},
-                ],
+                "name": "AnonFailAuthenticator",  # Duplicate mechanism ANONYMOUS
+                "configs": [],
             },
         ]
     }
 )
-def test_duplicate_mechanism_fails_startup(single_node) -> None:
+def test_duplicate_mechanism_fails_startup(single_node: Cluster) -> None:
     """
     Test that broker fails at startup when two authenticators have the same mechanism.
 
     This validates that AuthenticationController::initializeAuthenticators() properly
     detects duplicate mechanisms and prevents broker startup.
     """
-    node = single_node.last_known_leader
-    try:
-        node.start()
-        assert False  # The node should start with an exception
-    except Exception:
-        pass
+
+    check_fail_to_start(single_node)
 
 
-@start_cluster(False, False)
+@start_cluster(False)
 @tweak.broker.app_config.authentication(
     {
         "authenticators": [
@@ -635,19 +647,14 @@ def test_mismatched_anonymous_credential_fails_startup(single_node: Cluster) -> 
 
     This validates the bidirectional validation logic in validateAnonymousCredential().
     """
-    node = single_node.last_known_leader
-    try:
-        node.start()
-        assert False  # The node should start with an exception
-    except Exception:
-        pass
+    check_fail_to_start(single_node)
 
 
-@start_cluster(False, False)
+@start_cluster(False)
 @tweak.broker.app_config.authentication(
     {
         "authenticators": [
-            {"name": "AnonFailAuthenticator", "configs": []},
+            {"name": "AnonPassAuthenticator", "configs": []},
         ],
         # No anonymousCredential specified - custom ANONYMOUS must have credential
     }
@@ -662,9 +669,4 @@ def test_custom_anonymous_without_credential_fails_startup(
     This validates that validateAnonymousCredential() ensures custom ANONYMOUS
     authenticators (non-default) must have an explicit credential configured.
     """
-    node = single_node.last_known_leader
-    try:
-        node.start()
-        assert False  # The node should start with an exception
-    except Exception:
-        pass
+    check_fail_to_start(single_node)
