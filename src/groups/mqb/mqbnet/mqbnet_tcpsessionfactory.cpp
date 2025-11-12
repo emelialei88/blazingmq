@@ -381,12 +381,16 @@ void TCPSessionFactory::handleInitialConnection(
     d_initialConnectionContextCache[initialConnectionContext.get()] =
         initialConnectionContext;
 
+    bsl::weak_ptr<InitialConnectionContext> context_wp =
+        initialConnectionContext;
+
     // Register as observer of the channel to get the 'onClose'
     channel->onClose(
         bdlf::BindUtil::bindS(d_allocator_p,
                               &TCPSessionFactory::onClose,
                               this,
-                              initialConnectionContext,
+                              context_wp,
+                              channel,
                               bdlf::PlaceHolders::_1 /* bmqio::Status */));
 
     if (!initialConnectionContext->isIncoming()) {
@@ -796,13 +800,13 @@ void TCPSessionFactory::channelStateCallback(
 }
 
 void TCPSessionFactory::onClose(
-    const bsl::shared_ptr<InitialConnectionContext>& initialConnectionContext,
-    const bmqio::Status&                             status)
+    const bsl::weak_ptr<InitialConnectionContext>& context_wp,
+    const bsl::shared_ptr<bmqio::Channel>&         channel,
+    const bmqio::Status&                           status)
 {
     // Executed from *ANY* thread
 
-    const bsl::shared_ptr<bmqio::Channel>& channel =
-        initialConnectionContext->channel();
+    bsl::shared_ptr<InitialConnectionContext> context = context_wp.lock();
 
     int port;
     channel->properties().load(
@@ -816,7 +820,10 @@ void TCPSessionFactory::onClose(
 
         // set the 'isClosed' flag under lock to be checked under lock in
         // 'negotiationComplete'.
-        initialConnectionContext->onClose();
+
+        if (context) {
+            context->onClose();
+        }
 
         ChannelMap::const_iterator it = d_channels.find(channel.get());
         if (it != d_channels.end()) {
